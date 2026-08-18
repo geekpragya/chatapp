@@ -3,7 +3,7 @@ import Auth from "./pages/auth";
 import Chat from "./pages/chat";
 import Profile from "./pages/profile";
 import ProtectedRoute from "./components/ProtectedRoute";
-
+<Route path="/profile" element={<Profile />} />
 const App = () => {
   return (
     <BrowserRouter>
