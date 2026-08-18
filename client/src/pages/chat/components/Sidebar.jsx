@@ -1,10 +1,18 @@
 import { Link } from "react-router-dom";
-import { Search, SquarePen } from "lucide-react";
+import { Search, SquarePen, Users } from "lucide-react";
 import { cn } from "../../../lib/utils";
 import { getCurrentUser } from "../../../lib/auth";
 import Avatar from "./Avatar";
 
-const Sidebar = ({ contacts, activeId, onSelect, query, onQueryChange }) => {
+const Sidebar = ({
+  contacts,
+  activeId,
+  onSelect,
+  query,
+  onQueryChange,
+  onNewChat,
+  onNewGroup,
+}) => {
   const filtered = contacts.filter((c) =>
     c.name.toLowerCase().includes(query.toLowerCase())
   );
@@ -18,6 +26,15 @@ const Sidebar = ({ contacts, activeId, onSelect, query, onQueryChange }) => {
         <div className="flex items-center gap-1">
           <button
             type="button"
+            onClick={onNewGroup}
+            className="flex size-9 items-center justify-center rounded-full text-gray-500 hover:bg-gray-100 hover:text-purple-600"
+            title="New group"
+          >
+            <Users className="size-[18px]" />
+          </button>
+          <button
+            type="button"
+            onClick={onNewChat}
             className="flex size-9 items-center justify-center rounded-full text-gray-500 hover:bg-gray-100 hover:text-purple-600"
             title="New chat"
           >
@@ -26,7 +43,7 @@ const Sidebar = ({ contacts, activeId, onSelect, query, onQueryChange }) => {
           <Link
             to="/profile"
             className={cn(
-              "flex size-9 items-center justify-center rounded-full font-semibold text-white text-xs",
+              "flex size-9 items-center justify-center rounded-full text-xs font-semibold text-white",
               currentUser?.avatarColor || "bg-purple-500"
             )}
             title="Your profile"
@@ -64,7 +81,13 @@ const Sidebar = ({ contacts, activeId, onSelect, query, onQueryChange }) => {
                 activeId === contact.id ? "bg-purple-50" : "hover:bg-gray-50"
               )}
             >
-              <Avatar name={contact.name} online={contact.online} />
+              {contact.isGroup ? (
+                <div className="flex size-11 shrink-0 items-center justify-center rounded-full bg-purple-100 text-sm font-semibold text-purple-600">
+                  {contact.name.slice(0, 2).toUpperCase()}
+                </div>
+              ) : (
+                <Avatar name={contact.name} online={contact.online} />
+              )}
               <div className="min-w-0 flex-1">
                 <div className="flex items-center justify-between gap-2">
                   <p className="truncate text-sm font-semibold text-black">
