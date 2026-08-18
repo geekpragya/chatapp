@@ -1,19 +1,43 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import Background from "../../assets/login2.png";
+import { loginUser, signupUser } from "../../lib/auth";
 
 const Auth = () => {
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState("login");
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [error, setError] = useState("");
 
   const handleLogin = () => {
-    console.log("Login:", email, password);
+    setError("");
+    if (!email || !password) {
+      setError("Please enter your email and password.");
+      return;
+    }
+    loginUser({ email, password });
+    navigate("/chat");
   };
 
   const handleSignup = () => {
-    console.log("Signup:", email, password, confirmPassword);
+    setError("");
+    if (!email || !password || !confirmPassword) {
+      setError("Please fill in all fields.");
+      return;
+    }
+    if (password !== confirmPassword) {
+      setError("Passwords do not match.");
+      return;
+    }
+    if (password.length < 6) {
+      setError("Password must be at least 6 characters.");
+      return;
+    }
+    signupUser({ email, password });
+    navigate("/chat");
   };
 
   return (
@@ -42,7 +66,10 @@ const Auth = () => {
             <div className="flex border-b border-gray-400 mb-8">
 
               <button
-                onClick={() => setActiveTab("login")}
+                onClick={() => {
+                  setActiveTab("login");
+                  setError("");
+                }}
                 className={`w-1/2 py-3 text-lg font-medium transition-all ${
                   activeTab === "login"
                     ? "border-b-2 border-purple-500 text-black"
@@ -53,7 +80,10 @@ const Auth = () => {
               </button>
 
               <button
-                onClick={() => setActiveTab("signup")}
+                onClick={() => {
+                  setActiveTab("signup");
+                  setError("");
+                }}
                 className={`w-1/2 py-3 text-lg font-medium transition-all ${
                   activeTab === "signup"
                     ? "border-b-2 border-purple-500 text-black"
@@ -64,6 +94,12 @@ const Auth = () => {
               </button>
 
             </div>
+
+            {error && (
+              <p className="mb-4 rounded-lg bg-red-50 px-4 py-2 text-center text-sm text-red-600">
+                {error}
+              </p>
+            )}
 
             {/* LOGIN FORM */}
             {activeTab === "login" && (
